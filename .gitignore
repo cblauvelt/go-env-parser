@@ -1,0 +1,22 @@
+# Ignore everything
+*
+
+# Allow Go source and module files
+!*.go
+!go.mod
+!go.sum
+
+# Allow documentation
+!README.md
+!LICENSE
+
+# Allow this file
+!.gitignore
+
+# Allow GitHub Actions workflows
+!.github/
+!.github/workflows/
+!.github/workflows/*.yml
+
+# Allow directories (needed for whitelist to recurse)
+!*/
