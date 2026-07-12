@@ -106,6 +106,28 @@ u := env.RequiredValidated(p, "WEBHOOK_URL", parseURL)
 u := env.Validated(p, "WEBHOOK_URL", defaultURL, parseURL)
 ```
 
+## Cross-variable constraints
+
+Some rules span more than one variable. These three helpers check pure presence across a set of keys, append at most one error each into the same `Err()` result as every accessor, and respect [`WithEmptyAsUnset`](#withemptyasunset) (a set-but-empty variable counts as unset). They never panic on zero or one key.
+
+**`AllOrNone`** — the keys must be all set or all unset. Use it for values that only make sense together, such as a certificate and its private key:
+
+```go
+p.AllOrNone("TLS_CERT", "TLS_KEY")
+```
+
+**`MutuallyExclusive`** — at most one of the keys may be set. Use it for competing sources of the same thing:
+
+```go
+p.MutuallyExclusive("DB_DSN", "LOCAL_STORE")
+```
+
+**`RequiredWith`** — when the first key is set, every dependent must also be set. Use it for variables that a feature key turns from optional into required (one error per missing dependent):
+
+```go
+p.RequiredWith("SESSION_KEY", "API_URL", "API_KEY")
+```
+
 ## Options
 
 ### `WithEmptyAsUnset`
