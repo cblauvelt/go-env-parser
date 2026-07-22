@@ -65,6 +65,30 @@ Every type has two families:
 | `Time` / `RequiredTime`             | `time.Time` (RFC 3339)                                                  |
 | `TimeLayout` / `RequiredTimeLayout` | `time.Time` (custom layout)                                             |
 
+### Positive numbers
+
+Timeouts, size caps, and rate limits are almost always required to be greater
+than zero, and a zero or negative value is a configuration mistake rather than a
+meaningful setting. These accessors fold that rule into the parse, so a
+non-positive value is treated exactly like an unparseable one.
+
+| Method                                              | Type            |
+| --------------------------------------------------- | --------------- |
+| `PositiveInt` / `RequiredPositiveInt`               | `int`           |
+| `PositiveInt64` / `RequiredPositiveInt64`           | `int64`         |
+| `PositiveFloat64` / `RequiredPositiveFloat64`       | `float64`       |
+| `PositiveDuration` / `RequiredPositiveDuration`     | `time.Duration` |
+
+```go
+// A zero, negative, or unparseable value falls back to the default and fires
+// the bad-default hook.
+timeout := p.PositiveDuration("AUTHORIZATION_TIMEOUT", 15*time.Minute)
+maxBody := p.PositiveInt64("MAX_BODY_BYTES", 65536)
+
+// The Required forms record an error instead.
+rate := p.RequiredPositiveFloat64("RATE_LIMIT_PER_SOURCE")
+```
+
 ### Collections
 
 ```go
